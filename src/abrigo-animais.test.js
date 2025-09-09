@@ -28,4 +28,35 @@ describe('Abrigo de Animais', () => {
       expect(resultado.lista.length).toBe(4);
       expect(resultado.erro).toBeFalsy();
   });
+  test('Deve rejeitar brinquedo inválido', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas('BOLA,OSSO', 'RATO', 'Rex');
+    expect(resultado.erro).toBe('Brinquedo inválido');
+  });
+
+  test('Deve rejeitar brinquedos duplicados para uma pessoa', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas('BOLA,BOLA', 'RATO', 'Rex');
+    expect(resultado.erro).toBe('Brinquedo inválido');
+  });
+
+  test('Deve rejeitar animais duplicados na ordem', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas('BOLA,RATO', 'LASER', 'Rex,Rex');
+    expect(resultado.erro).toBe('Animal inválido');
+  });
+
+  test('Deve impedir adoção do Loco se não houver companhia', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas('SKATE,RATO', '', 'Loco');
+    expect(resultado.lista[0]).toBe('Loco - abrigo');
+  });
+  
+  test('Deve permitir adoção do Loco se houver companhia', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas('SKATE,RATO', '', 'Loco,Rex');
+    expect(resultado.lista).toContain('Loco - pessoa 1');
+  });
+
+  test('Gato não deve ser adotado se a pessoa tiver brinquedos a mais', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas('BOLA,LASER,RATO', '', 'Mimi');
+    expect(resultado.lista[0]).toBe('Mimi - abrigo');
+  });
+
+
 });
